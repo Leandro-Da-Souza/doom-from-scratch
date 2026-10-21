@@ -2,10 +2,21 @@
 #include <SDL3/SDL_events.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <math.h>
 
-// void move(float x, char direction[]) {
-//     if (direction) {}
-// };
+void move(SDL_FRect *player, float dx, float dy, float speed, float delta) {
+    player->x += dx * speed * delta;
+    player->y += dy * speed * delta;
+}
+
+void vector_normalize(float *dx, float *dy) {
+    float length = sqrtf(*dx * *dx + *dy * *dy);
+
+    if (length > 0.0f) {
+        *dx /= length;
+        *dy /= length;
+    }
+}
 
 int main(void) {
     if(!SDL_Init(SDL_INIT_VIDEO)) {
@@ -73,22 +84,28 @@ int main(void) {
 
         const bool *keys = SDL_GetKeyboardState(NULL);
 
+        float dx = 0.0f;
+        float dy = 0.0f;
+
         if (keys[SDL_SCANCODE_D]) {
-            player.x += speed * dt;
+            dx += 1.0f;
         }
 
         if (keys[SDL_SCANCODE_A]) {
-            player.x -= speed * dt;
+            dx -= 1.0f;
         }
 
-        if(keys[SDL_SCANCODE_W]) {
-            player.y -= speed * dt;
+        if (keys[SDL_SCANCODE_W]) {
+            dy -= 1.0f;
         }
 
-        if(keys[SDL_SCANCODE_S]) {
-            player.y += speed * dt;
+        if (keys[SDL_SCANCODE_S]) {
+            dy += 1.0f;
         }
 
+        vector_normalize(&dx, &dy);
+
+        move(&player, dx, dy, speed, dt);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
