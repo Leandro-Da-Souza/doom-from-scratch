@@ -1,0 +1,22 @@
+# Compiled executable
+/doom
+
+# Object files
+*.o
+*.obj
+
+# Build directories
+/build/
+/bin/
+
+# Debugging artifacts
+*.core
+core
+
+# Editor files
+.vscode/
+.idea/
+
+# Temporary files
+*.swp
+*~

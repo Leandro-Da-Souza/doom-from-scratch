@@ -11,6 +11,12 @@ int main(void) {
 
     SDL_Window *win = NULL;
     SDL_Renderer *renderer = NULL;
+    SDL_FRect player = {
+        .x = 100,
+        .y = 100,
+        .w = 40,
+        .h = 40    
+    };
 
     win = SDL_CreateWindow(
         "DOOM from scratch",
@@ -56,8 +62,15 @@ int main(void) {
             }
         }
 
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+
         SDL_RenderClear(renderer);
+
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+
+        SDL_RenderFillRect(renderer, &player);
+
         SDL_RenderPresent(renderer);
     }
     
