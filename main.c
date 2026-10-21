@@ -43,11 +43,16 @@ int main(void) {
         return 1;
     }
 
-    // game loop
     bool is_game_running = true;
+    Uint64 last_time = SDL_GetTicks();
+    float speed = 200.0f;
 
     while (is_game_running)
     {
+        Uint64 current_time = SDL_GetTicks();
+        float dt = (current_time - last_time) / 1000.0f;
+        last_time = current_time;
+
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
@@ -62,6 +67,7 @@ int main(void) {
             }
         }
 
+        player.x += speed * dt;
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
