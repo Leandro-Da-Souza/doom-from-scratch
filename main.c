@@ -3,6 +3,10 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+// void move(float x, char direction[]) {
+//     if (direction) {}
+// };
+
 int main(void) {
     if(!SDL_Init(SDL_INIT_VIDEO)) {
         fprintf(stderr, "SDL error: %s\n", SDL_GetError());
@@ -52,8 +56,8 @@ int main(void) {
         Uint64 current_time = SDL_GetTicks();
         float dt = (current_time - last_time) / 1000.0f;
         last_time = current_time;
-
         SDL_Event event;
+
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
@@ -67,7 +71,24 @@ int main(void) {
             }
         }
 
-        player.x += speed * dt;
+        const bool *keys = SDL_GetKeyboardState(NULL);
+
+        if (keys[SDL_SCANCODE_D]) {
+            player.x += speed * dt;
+        }
+
+        if (keys[SDL_SCANCODE_A]) {
+            player.x -= speed * dt;
+        }
+
+        if(keys[SDL_SCANCODE_W]) {
+            player.y -= speed * dt;
+        }
+
+        if(keys[SDL_SCANCODE_S]) {
+            player.y += speed * dt;
+        }
+
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
