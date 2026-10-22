@@ -23,7 +23,13 @@ Vector normalize_vector(Vector v, float length) {
     return v;
 }
 
-// float calculate_movement(float *direction, float speed, float dt) {}
+Vector calculate_movement(Vector direction, float speed, float dt) {
+    Vector movement_vector = { 
+        (direction.x * speed * dt), 
+        (direction.y * speed * dt) 
+    };
+    return movement_vector;
+}
 
 Vector subtract_vector(Vector a, Vector b) {
     Vector subtracted = { a.x - b.x, a.y - b.y };
@@ -31,6 +37,12 @@ Vector subtract_vector(Vector a, Vector b) {
 }
 
 int main (void) {
+    float speed = 200.0f;
+    // Delta time (dt): seconds elapsed between two frames.
+    // Multiplying speed (pixels/second) by dt gives us
+    // how many pixels to move during that frame.
+    // Fixed at 0.5 seconds here for testing; measured in a real game.
+    float dt = 0.5f;
     Vector start = {100.0f, 100.0f};
     Vector goblin = start;
 
@@ -45,10 +57,17 @@ int main (void) {
     // How far did the bastard travel?
     float distance = magnitude(displacement);
 
-    // which direction did the bastard go?
+    // Which direction did the bastard go?
     Vector direction = normalize_vector(displacement, distance);
 
-    print_vector(&direction);
+    // Get the bastards movement.
+    Vector movement = calculate_movement(
+        direction,
+        speed,
+        dt
+    );
+
+    print_vector(&movement);
 
     return 0;
 }
