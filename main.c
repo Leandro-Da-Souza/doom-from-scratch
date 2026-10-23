@@ -14,9 +14,9 @@ typedef struct {
     float speed;
 } Player;
 
-void move(Player *player, Vector direction, float speed, float delta) {
-    player->rect.x += direction.x * speed * delta;
-    player->rect.y += direction.y * speed * delta;
+void move(Player *player, Vector direction, float delta) {
+    player->rect.x += direction.x * player->speed * delta;
+    player->rect.y += direction.y * player->speed * delta;
 }
 
 void vector_normalize(Vector *v) {
@@ -25,6 +25,35 @@ void vector_normalize(Vector *v) {
     if (length > 0.0f) {
         v->x /= length;
         v->y /= length;
+    }
+}
+
+float calculate_delta_time (Uint64 *last_time) {
+    Uint64 current_time = SDL_GetTicks();
+
+    float dt = (current_time - *last_time) / 1000.0f;
+    *last_time = current_time;
+
+    return dt;
+}
+
+void read_movement_input (Vector *v) {
+    const bool *keys = SDL_GetKeyboardState(NULL);
+
+    if (keys[SDL_SCANCODE_D]) {
+        v->x += 1.0f;
+    }
+
+    if (keys[SDL_SCANCODE_A]) {
+        v->x -= 1.0f;
+    }
+
+    if (keys[SDL_SCANCODE_W]) {
+        v->y -= 1.0f;
+    }
+
+    if (keys[SDL_SCANCODE_S]) {
+        v->y += 1.0f;
     }
 }
 
@@ -76,9 +105,6 @@ int main(void) {
 
     while (is_game_running)
     {
-        Uint64 current_time = SDL_GetTicks();
-        float dt = (current_time - last_time) / 1000.0f;
-        last_time = current_time;
         SDL_Event event;
 
         while (SDL_PollEvent(&event))
@@ -94,29 +120,15 @@ int main(void) {
             }
         }
 
-        const bool *keys = SDL_GetKeyboardState(NULL);
+        float dt = calculate_delta_time(&last_time);
 
         Vector direction = { 0.0f, 0.0f };
 
-        if (keys[SDL_SCANCODE_D]) {
-            direction.x += 1.0f;
-        }
-
-        if (keys[SDL_SCANCODE_A]) {
-            direction.x -= 1.0f;
-        }
-
-        if (keys[SDL_SCANCODE_W]) {
-            direction.y -= 1.0f;
-        }
-
-        if (keys[SDL_SCANCODE_S]) {
-            direction.y += 1.0f;
-        }
+        read_movement_input(&direction);
 
         vector_normalize(&direction);
 
-        move(&goblin, direction, goblin.speed, dt);
+        move(&goblin, direction, dt);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
