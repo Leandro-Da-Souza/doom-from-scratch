@@ -6,6 +6,11 @@ typedef struct {
     float y;
 } Vector;
 
+typedef struct {
+    Vector position;
+    float speed;
+} Player;
+
 void print_vector(const Vector *v) {
     printf("(%.2f, %.2f)\n", v->x, v->y);
 }
@@ -36,17 +41,19 @@ Vector subtract_vector(Vector a, Vector b) {
     return subtracted;
 }
 
-void apply_movement(Vector *v, Vector movement) {
-    v->x += movement.x;
-    v->y += movement.y;
+void apply_movement(Player *player, Vector movement) {
+    player->position.x += movement.x;
+    player->position.y += movement.y;
 }
 
 int main (void) {
-    Vector goblin = {100.0f, 100.0f};
+    Player goblin = {
+        .position = {100.0f, 100.0f},
+        .speed = 200.0f
+    };
     // random direction, 
     Vector direction = {3.0f, 4.0f};
 
-    float speed = 200.0f;
     float dt = 0.5f;
 
     float length = magnitude(direction);
@@ -55,13 +62,13 @@ int main (void) {
 
     Vector movement = calculate_movement(
         normalized_direction,
-        speed,
+        goblin.speed,
         dt
     );
 
     apply_movement(&goblin, movement);
 
-    print_vector(&goblin);
+    print_vector(&goblin.position);
 
     return 0;
 }
