@@ -1,5 +1,6 @@
 # Compiled executable
 /doom
+/playground
 
 # Object files
 *.o
@@ -20,4 +21,6 @@ core
 # Temporary files
 *.swp
 *~
-/playground
+
+# Other
+/notes.md
