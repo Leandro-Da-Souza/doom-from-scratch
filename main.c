@@ -4,17 +4,27 @@
 #include <stdio.h>
 #include <math.h>
 
-void move(SDL_FRect *player, float dx, float dy, float speed, float delta) {
-    player->x += dx * speed * delta;
-    player->y += dy * speed * delta;
+typedef struct {
+    float x;
+    float y;
+} Vector;
+
+typedef struct {
+    SDL_FRect rect;
+    float speed;
+} Player;
+
+void move(Player *player, Vector direction, float speed, float delta) {
+    player->rect.x += direction.x * speed * delta;
+    player->rect.y += direction.y * speed * delta;
 }
 
-void vector_normalize(float *dx, float *dy) {
-    float length = sqrtf(*dx * *dx + *dy * *dy);
+void vector_normalize(Vector *v) {
+    float length = sqrtf(v->x * v->x + v->y * v->y);
 
     if (length > 0.0f) {
-        *dx /= length;
-        *dy /= length;
+        v->x /= length;
+        v->y /= length;
     }
 }
 
@@ -26,11 +36,14 @@ int main(void) {
 
     SDL_Window *win = NULL;
     SDL_Renderer *renderer = NULL;
-    SDL_FRect player = {
-        .x = 100,
-        .y = 100,
-        .w = 40,
-        .h = 40    
+    Player goblin = {
+        .rect = {
+            .x = 100.0f,
+            .y = 100.0f,
+            .w = 40.0f,
+            .h = 40.0f,
+        },
+        .speed = 200.0f
     };
 
     win = SDL_CreateWindow(
@@ -60,7 +73,6 @@ int main(void) {
 
     bool is_game_running = true;
     Uint64 last_time = SDL_GetTicks();
-    float speed = 200.0f;
 
     while (is_game_running)
     {
@@ -84,28 +96,27 @@ int main(void) {
 
         const bool *keys = SDL_GetKeyboardState(NULL);
 
-        float dx = 0.0f;
-        float dy = 0.0f;
+        Vector direction = { 0.0f, 0.0f };
 
         if (keys[SDL_SCANCODE_D]) {
-            dx += 1.0f;
+            direction.x += 1.0f;
         }
 
         if (keys[SDL_SCANCODE_A]) {
-            dx -= 1.0f;
+            direction.x -= 1.0f;
         }
 
         if (keys[SDL_SCANCODE_W]) {
-            dy -= 1.0f;
+            direction.y -= 1.0f;
         }
 
         if (keys[SDL_SCANCODE_S]) {
-            dy += 1.0f;
+            direction.y += 1.0f;
         }
 
-        vector_normalize(&dx, &dy);
+        vector_normalize(&direction);
 
-        move(&player, dx, dy, speed, dt);
+        move(&goblin, direction, goblin.speed, dt);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
@@ -113,7 +124,7 @@ int main(void) {
 
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 
-        SDL_RenderFillRect(renderer, &player);
+        SDL_RenderFillRect(renderer, &goblin.rect);
 
         SDL_RenderPresent(renderer);
     }

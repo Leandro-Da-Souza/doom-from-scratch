@@ -1,6 +1,7 @@
 # Compiled executable
 /doom
 /playground
+/main
 
 # Object files
 *.o
